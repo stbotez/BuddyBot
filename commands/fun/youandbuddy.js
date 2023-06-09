@@ -5,8 +5,8 @@ const { request } = require('undici');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('img')
-		.setDescription('Hopefully returns an image'),
+		.setName('youandbuddy')
+		.setDescription('Now you can be together'),
 	async execute(interaction) {
         const canvas = createCanvas(700, 250);
 		const context = canvas.getContext('2d');
