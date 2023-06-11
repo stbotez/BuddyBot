@@ -2977,3 +2977,9 @@ node_modules/tonal-midi/package.json
 node_modules/tonal-midi/README.md
 node_modules/tonal-midi/build/index.js
 node_modules/tonal-midi/test/midi.test.js
+config - test.json
+assets/soundfonts/GoldenEye_007.sf2
+assets/soundfonts/Kirby_64.sf2
+assets/soundfonts/Mario_Kart_64_Soundfont.sf2
+commands/fun/output/output.wav
+commands/fun/output/temp.midi
