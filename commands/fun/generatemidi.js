@@ -9,6 +9,7 @@ const { getRandomIntInclusive } = require(path.join(
   "helper.js"
 ));
 const { Scale } = require("tonal");
+const logger = require(path.join(process.cwd(), "util", "logger.js"));
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -39,7 +40,7 @@ module.exports = {
     const scaleQual = scaleQuals[majOrMin];
 
     const scale = Scale.get(note + " " + scaleQual);
-    console.log(`The chosen scale is ${scale.name}`);
+    logger.info(`The chosen scale is ${scale.name}`);
 
     const instrNum = getRandomIntInclusive(0, 127); // Randomize instrument
     const durations = ["1", "2", "d2", "4", "d4", "8", "8t", "d8", "16"];
@@ -49,7 +50,7 @@ module.exports = {
 
     // Randomize number of midi notes
     const numNotes = getRandomIntInclusive(16, 48);
-    console.log(`The number of notes is ${numNotes}`);
+    logger.info(`The number of notes is ${numNotes}`);
     for (i = 0; i < numNotes; i++) {
       let randomNote =
         scale.notes[getRandomIntInclusive(0, scale.notes.length - 1)];
@@ -73,7 +74,7 @@ module.exports = {
     const soundfonts = fs.readdirSync(soundfontDir);
     const soundfont =
       soundfonts[getRandomIntInclusive(0, soundfonts.length - 1)];
-    console.log(`Currently selected soundfont is ${soundfont}`);
+   logger.info(`Currently selected soundfont is ${soundfont}`);   
     const child = spawnSync("fluidsynth", [
       path.join(soundfontDir, soundfont),
       midiPath,
