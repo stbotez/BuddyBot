@@ -3,12 +3,12 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
 const MidiWriter = require("midi-writer-js");
+const { Scale } = require("tonal");
 const { getRandomIntInclusive } = require(path.join(
   process.cwd(),
   "util",
   "helper.js"
 ));
-const { Scale } = require("tonal");
 const logger = require(path.join(process.cwd(), "util", "logger.js"));
 
 module.exports = {
@@ -39,11 +39,11 @@ module.exports = {
     const majOrMin = getRandomIntInclusive(0, 1);
     const scaleQual = scaleQuals[majOrMin];
 
-    const scale = Scale.get(note + " " + scaleQual);
+    const scale = Scale.get(`${note} ${scaleQual}`);
     logger.info(`The chosen scale is ${scale.name}`);
 
     const instrNum = getRandomIntInclusive(0, 127); // Randomize instrument
-    const durations = ["1", "2", "d2", "4", "d4", "8", "8t", "d8", "16"];
+    const noteDurations = ["1", "2", "d2", "4", "d4", "8", "8t", "d8", "16"];
 
     const track = new MidiWriter.Track();
     track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: instrNum }));
@@ -55,7 +55,7 @@ module.exports = {
       let randomNote =
         scale.notes[getRandomIntInclusive(0, scale.notes.length - 1)];
       let randomDuration =
-        durations[getRandomIntInclusive(0, durations.length - 1)];
+        noteDurations[getRandomIntInclusive(0, noteDurations.length - 1)];
       track.addEvent(
         new MidiWriter.NoteEvent({
           pitch: [randomNote],
@@ -74,7 +74,7 @@ module.exports = {
     const soundfonts = fs.readdirSync(soundfontDir);
     const soundfont =
       soundfonts[getRandomIntInclusive(0, soundfonts.length - 1)];
-   logger.info(`Currently selected soundfont is ${soundfont}`);   
+    logger.info(`Currently selected soundfont is ${soundfont}`);
     const child = spawnSync("fluidsynth", [
       path.join(soundfontDir, soundfont),
       midiPath,
