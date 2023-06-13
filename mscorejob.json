@@ -1,0 +1,9 @@
+[
+  {
+    "in": "./commands/fun/output/temp.midi",
+    "out": [
+      "./commands/fun/output/score.png",
+      "./commands/fun/output/music.wav"
+    ]
+  }
+]
