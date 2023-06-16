@@ -19,12 +19,13 @@ module.exports = {
     ),
   async execute(interaction) {
     const query = interaction.options.getString("query");
-    logger.info(query);
+    logger.info(`User query provided: ${query}`);
     const searchType = "image";
     const imgResult = await request(`
       https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}`);
     const { items } = await imgResult.body.json();
     const firstResult = items[0]["link"];
+    logger.info(`Returned image URL: ${firstResult}`);
     await interaction.reply({ files: [firstResult] });
   },
 };
