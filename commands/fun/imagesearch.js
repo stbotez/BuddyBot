@@ -1,5 +1,5 @@
 const path = require("node:path");
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { request } = require("undici");
 const { googleKey, searchEngineId } = require(path.join(
   process.cwd(),
@@ -24,8 +24,12 @@ module.exports = {
     const imgResult = await request(`
       https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}`);
     const { items } = await imgResult.body.json();
-    const firstResult = items[0]["link"];
-    logger.info(`Returned image URL: ${firstResult}`);
-    await interaction.reply({ files: [firstResult] });
+    const firstResult = items[0];
+
+    const embed = new EmbedBuilder()
+      .setTitle(firstResult["title"])
+      .setImage(firstResult["link"]);
+    logger.info(`Returned image URL: ${firstResult["link"]}`);
+    await interaction.reply({ embeds: [embed] });
   },
 };
