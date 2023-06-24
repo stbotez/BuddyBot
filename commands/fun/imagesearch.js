@@ -27,8 +27,11 @@ module.exports = {
     const firstResult = items[0];
 
     const embed = new EmbedBuilder()
+      .setColor("Blue")
       .setTitle(firstResult["title"])
-      .setImage(firstResult["link"]);
+      .setURL(firstResult["link"])
+      .setImage(firstResult["link"])
+      .addFields({ name: "Query", value: query, inline: true });
     logger.info(`Returned image URL: ${firstResult["link"]}`);
     await interaction.reply({ embeds: [embed] });
   },
