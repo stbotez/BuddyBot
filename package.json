@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@magenta/music": "^1.23.1",
     "@napi-rs/canvas": "^0.1.41",
     "discord.js": "^14.11.0",
     "midi-writer-js": "^2.1.4",
