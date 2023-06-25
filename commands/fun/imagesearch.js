@@ -1,5 +1,4 @@
 const path = require("node:path");
-const fs = require("fs");
 const {
   SlashCommandBuilder,
   EmbedBuilder,
@@ -31,28 +30,33 @@ module.exports = {
     const query = interaction.options.getString("query");
     logger.info(`User query: ${query}`);
     const searchType = "image";
+    const startInd = getRandomIntInclusive(0, 80);
     const responseData = await request(`
-      https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}`);
+      https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
+    logger.info(`
+      https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
     logger.info("Header information: ");
     logger.info(responseData.headers);
     const { items } = await responseData.body.json();
     if (items === undefined) {
+      logger.info("Returned result has no body");
       const budInvert = new AttachmentBuilder(
         path.join(process.cwd(), "assets", "img", "buddyInvert.png")
       );
-      logger.info("Returned result has no body");
       const embed = new EmbedBuilder()
         .setColor("Red")
         .setTitle("No results found")
         .setThumbnail("attachment://buddyInvert.png")
         .addFields({ name: "Query", value: query, inline: true });
 
-      return interaction.reply({ embeds: [embed], files: [budInvert] });
+      await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
+
     logger.info(`HTTP response code is ${responseData.statusCode}`);
-    logger.info("Body: ");
-    logger.info(items);
     const randResult = items[getRandomIntInclusive(0, items.length - 1)];
+    logger.info(
+      `Randomly chosen result: ${JSON.stringify(randResult, null, 4)}`
+    );
     const embed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(randResult["title"])
