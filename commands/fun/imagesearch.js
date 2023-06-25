@@ -35,7 +35,7 @@ module.exports = {
       https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
     logger.info(`
       https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
-    logger.info("Header information: ");
+    logger.info("Header: ");
     logger.info(responseData.headers);
     const { items } = await responseData.body.json();
     if (items === undefined) {
@@ -52,7 +52,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    logger.info(`HTTP response code is ${responseData.statusCode}`);
+    logger.info(`HTTP response code: ${responseData.statusCode}`);
     const randResult = items[getRandomIntInclusive(0, items.length - 1)];
     logger.info(
       `Randomly chosen result: ${JSON.stringify(randResult, null, 4)}`
