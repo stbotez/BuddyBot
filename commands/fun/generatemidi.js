@@ -70,11 +70,11 @@ module.exports = {
     fs.writeFileSync(midiPath, write.buildFile());
 
     // Pick a soundfont at random
-    const soundfontDir = path.join(process.cwd(), "assets", "soundfonts");
+    const soundfontDir = path.join(process.cwd(), "assets", "soundfont");
     const soundfonts = fs.readdirSync(soundfontDir);
     const soundfont =
       soundfonts[getRandomIntInclusive(0, soundfonts.length - 1)];
-   logger.info(`Currently selected soundfont is ${soundfont}`);   
+    logger.info(`Currently selected soundfont is ${soundfont}`);
     const child = spawnSync("fluidsynth", [
       path.join(soundfontDir, soundfont),
       midiPath,
