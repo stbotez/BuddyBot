@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
-const { token } = require("./config.json");
+const dotenv = require("dotenv").config();
 const logger = require(path.join(__dirname, "util", "logger.js"));
 
 // Create a new client instance
