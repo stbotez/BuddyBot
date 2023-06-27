@@ -11,3 +11,7 @@ config.json
 config.json
 assets/melody/battle garegga - fly to the leaden sky.mid
 test.midi
+assets/soundfont/Amen_Drum_Kit.sf2
+assets/soundfont/Escudero_Piano_M1.sf2
+assets/soundfont/m1_organ.sf2
+commands/fun/output.wav
