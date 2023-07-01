@@ -25,6 +25,13 @@ module.exports = {
         .setName("query")
         .setDescription("What do you wish to see?")
         .setRequired(true)
+    )
+    .addIntegerOption((option) =>
+      option
+        .setName("index")
+        .setDescription("Return a specific image using its index")
+        .setMinValue(0)
+        .setMaxValue(99)
     ),
   async execute(interaction) {
     const query = interaction.options.getString("query");
