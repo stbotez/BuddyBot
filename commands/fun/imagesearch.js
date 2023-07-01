@@ -57,9 +57,9 @@ module.exports = {
     );
     const embed = new EmbedBuilder()
       .setColor("Blue")
-      .setTitle(randResult["title"])
-      .setURL(randResult["link"])
-      .setImage(randResult["link"])
+      .setTitle(randResult.title)
+      .setURL(randResult.link)
+      .setImage(randResult.link)
       .addFields({ name: "Query", value: query, inline: true });
     await interaction.reply({ embeds: [embed] });
   },
