@@ -37,7 +37,6 @@ module.exports = {
     logger.info(res.headers);
     const body = await res.body.json();
     if (body.searchInformation.totalResults == 0) {
-      logger.info("Returned result has no body");
       const budInvert = new AttachmentBuilder(
         path.join(process.cwd(), "assets", "img", "buddyInvert.png")
       );
