@@ -31,14 +31,12 @@ module.exports = {
     logger.info(`User query: ${query}`);
     const searchType = "image";
     const startInd = getRandomIntInclusive(0, 80);
-    const responseData = await request(`
-      https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
-    logger.info(`
+    const res = await request(`
       https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
     logger.info("Header: ");
-    logger.info(responseData.headers);
-    const { items } = await responseData.body.json();
-    if (items === undefined) {
+    logger.info(res.headers);
+    const body = await res.body.json();
+    if (body.searchInformation.totalResults == 0) {
       logger.info("Returned result has no body");
       const budInvert = new AttachmentBuilder(
         path.join(process.cwd(), "assets", "img", "buddyInvert.png")
@@ -52,8 +50,8 @@ module.exports = {
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    logger.info(`HTTP response code: ${responseData.statusCode}`);
-    const randResult = items[getRandomIntInclusive(0, items.length - 1)];
+    const randResult =
+      body.items[getRandomIntInclusive(0, body.items.length - 1)];
     logger.info(
       `Randomly chosen result: ${JSON.stringify(randResult, null, 4)}`
     );
