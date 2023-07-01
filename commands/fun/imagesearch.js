@@ -64,14 +64,14 @@ module.exports = {
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    let image = null;
+    let image;
     if (index == -1) {
       image = body.items[getRandomIntInclusive(0, body.items.length - 1)];
       logger.info(
         `Randomly chosen result: ${JSON.stringify(randResult, null, 4)}`
       );
     } else {
-      image = body.items;
+      image = body.items[index % 10];
     }
     const embed = new EmbedBuilder()
       .setColor("Blue")
@@ -92,4 +92,4 @@ function getPageofIndex(ind) {
   return lowerBound / 10;
 }
 
-// TODO: Probably move this function to my helper class.
+// TODO: Probably move this function to helper class.
