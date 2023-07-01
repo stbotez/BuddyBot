@@ -67,17 +67,15 @@ module.exports = {
     let image;
     if (index == -1) {
       image = body.items[getRandomIntInclusive(0, body.items.length - 1)];
-      logger.info(
-        `Randomly chosen result: ${JSON.stringify(randResult, null, 4)}`
-      );
+      logger.info(`Randomly chosen result: ${JSON.stringify(image, null, 4)}`);
     } else {
       image = body.items[index % 10];
     }
     const embed = new EmbedBuilder()
       .setColor("Blue")
-      .setTitle(randResult.title)
-      .setURL(randResult.link)
-      .setImage(randResult.link)
+      .setTitle(image.title)
+      .setURL(image.link)
+      .setImage(image.link)
       .addFields({ name: "Query", value: query, inline: true });
     await interaction.reply({ embeds: [embed] });
   },
