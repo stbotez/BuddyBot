@@ -32,14 +32,19 @@ module.exports = {
         .setDescription("Return a specific image using its index")
         .setMinValue(0)
         .setMaxValue(99)
+    )
+    .addBooleanOption((option) =>
+      option.setName("isanimated").setDescription("Return only animated images")
     ),
+
   async execute(interaction) {
     const query = interaction.options.getString("query");
     const imageIndex = interaction.options.getInteger("index") ?? -1;
-    const toggleRandomResults = imageIndex == -1 ? true : false;
+    const areResultsRandom = imageIndex == -1 ? true : false;
+    const isAnimated = interaction.options.getBoolean("isanimated") ?? false;
     const searchType = "image";
     const resultsPerPage = 10;
-    const startImageIndex = toggleRandomResults
+    const startImageIndex = areResultsRandom
       ? getRandomIntInclusive(0, 80)
       : getPageContainingImageIndex(imageIndex) * resultsPerPage;
     const requestURL =
@@ -48,6 +53,7 @@ module.exports = {
       `&cx=${searchEngineId}` +
       `&q=${query}` +
       `&searchType=${searchType}` +
+      `&imgType=${isAnimated ? "animated" : "imgTypeUndefined"}` +
       `&start=${startImageIndex}`;
     logger.info(`Request URL: ${requestURL}`);
     const res = await request(requestURL);
@@ -65,7 +71,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    const image = toggleRandomResults
+    const image = areResultsRandom
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
       : body.items[imageIndex % 10];
     const embed = new EmbedBuilder()
