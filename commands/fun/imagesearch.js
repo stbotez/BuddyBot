@@ -40,11 +40,11 @@ module.exports = {
   async execute(interaction) {
     const query = interaction.options.getString("query");
     const imageIndex = interaction.options.getInteger("index") ?? -1;
-    const areResultsRandom = imageIndex == -1 ? true : false;
+    const shouldResultsRandomize = imageIndex == -1 ? true : false;
     const isAnimated = interaction.options.getBoolean("isanimated") ?? false;
     const searchType = "image";
     const resultsPerPage = 10;
-    const startImageIndex = areResultsRandom
+    const startImageIndex = shouldResultsRandomize
       ? getRandomIntInclusive(0, 80)
       : getPageContainingImageIndex(imageIndex) * resultsPerPage;
     const requestURL =
@@ -71,7 +71,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    const image = areResultsRandom
+    const image = shouldResultsRandomize
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
       : body.items[imageIndex % 10];
     const embed = new EmbedBuilder()
