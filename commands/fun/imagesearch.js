@@ -35,21 +35,23 @@ module.exports = {
     ),
   async execute(interaction) {
     const query = interaction.options.getString("query");
-    const index = interaction.options.getInteger("index") ?? -1;
+    const imageIndex = interaction.options.getInteger("index") ?? -1;
+    const toggleRandomResults = imageIndex == -1 ? true : false;
     const searchType = "image";
     const resultsPerPage = 10;
-    let startInd;
-    // no user-provided index, return a random image by default
-    if (index == -1) {
-      startInd = getRandomIntInclusive(0, 90);
-    } else {
-      startInd = getPageofIndex(index) * resultsPerPage;
-    }
-    const res = await request(`
-      https://www.googleapis.com/customsearch/v1?key=${googleAPIKey}&cx=${searchEngineId}&q=${query}&searchType=${searchType}&start=${startInd}`);
-    logger.info(`User query: ${query}`);
-    logger.info("Header: ");
-    logger.info(res.headers);
+    const startImageIndex = toggleRandomResults
+      ? getRandomIntInclusive(0, 80)
+      : getPageContainingImageIndex(imageIndex) * resultsPerPage;
+    const requestURL =
+      `https://www.googleapis.com/customsearch/v1?` +
+      `key=${googleAPIKey}` +
+      `&cx=${searchEngineId}` +
+      `&q=${query}` +
+      `&searchType=${searchType}` +
+      `&start=${startImageIndex}`;
+    logger.info(`Request URL: ${requestURL}`);
+    const res = await request(requestURL);
+    logger.info(`Response code: ${res.statusCode}`);
     const body = await res.body.json();
     if (body.searchInformation.totalResults == 0) {
       const budInvert = new AttachmentBuilder(
@@ -60,17 +62,12 @@ module.exports = {
         .setTitle("No results found")
         .setThumbnail("attachment://buddyInvert.png")
         .addFields({ name: "Query", value: query, inline: true });
-
       await interaction.reply({ embeds: [embed], files: [budInvert] });
     }
 
-    let image;
-    if (index == -1) {
-      image = body.items[getRandomIntInclusive(0, body.items.length - 1)];
-      logger.info(`Randomly chosen result: ${JSON.stringify(image, null, 4)}`);
-    } else {
-      image = body.items[index % 10];
-    }
+    const image = toggleRandomResults
+      ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
+      : body.items[imageIndex % 10];
     const embed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(image.title)
@@ -81,7 +78,7 @@ module.exports = {
   },
 };
 
-function getPageofIndex(ind) {
+function getPageContainingImageIndex(ind) {
   let lowerBound = 0;
 
   if (ind > 9) {
