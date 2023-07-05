@@ -1,9 +1,8 @@
 const path = require("node:path");
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require("discord.js");
 const { request } = require("undici");
 const { googleAPIKey, searchEngineId } = require(path.join("..", "config.json"));
-const { getRandomIntInclusive, getPageOfImageIndex } = require(path.join("..", "util", "helper.js"));
-const logger = require(path.join("..", "util", "logger.js"));
+const { getRandomIntInclusive, getPageOfImageIndex, logger } = require(path.join("..", "util", "helper.js"));
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,14 +22,14 @@ module.exports = {
         .setMaxValue(99)
     )
     .addBooleanOption((option) =>
-      option.setName("isanimated").setDescription("Return only animated images")
+      option.setName("is-animated").setDescription("Return only animated images")
     ),
 
   async execute(interaction) {
     const query = interaction.options.getString("query");
     const imageIndex = interaction.options.getInteger("index") ?? -1;
     const shouldResultsRandomize = imageIndex == -1 ? true : false;
-    const isAnimated = interaction.options.getBoolean("isanimated") ?? false;
+    const isAnimated = interaction.options.getBoolean("is-animated") ?? false;
     const searchType = "image";
     const resultsPerPage = 10;
     const startImageIndex = shouldResultsRandomize
@@ -72,5 +71,3 @@ module.exports = {
     await interaction.reply({ embeds: [embed] });
   },
 };
-
-// TODO: Probably move this function to helper class.
