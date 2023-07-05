@@ -1,3 +1,6 @@
+const pino = require("pino");
+const pino = require("pino");
+
 module.exports = {
   getRandomIntInclusive: (min, max) => {
     min = Math.ceil(min);
@@ -13,4 +16,6 @@ module.exports = {
     }
     return page / 10;
   },
+
+  logger: pino(),
 };

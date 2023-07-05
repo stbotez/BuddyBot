@@ -1,20 +1,9 @@
 const path = require("node:path");
-const {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  AttachmentBuilder,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder} = require("discord.js");
 const { request } = require("undici");
-const { googleAPIKey, searchEngineId } = require(path.join(
-  process.cwd(),
-  "config.json"
-));
-const { getRandomIntInclusive, getPageOfImageIndex } = require(path.join(
-  process.cwd(),
-  "util",
-  "helper.js"
-));
-const logger = require(path.join(process.cwd(), "util", "logger.js"));
+const { googleAPIKey, searchEngineId } = require(path.join("..", "config.json"));
+const { getRandomIntInclusive, getPageOfImageIndex } = require(path.join("..", "util", "helper.js"));
+const logger = require(path.join("..", "util", "logger.js"));
 
 module.exports = {
   data: new SlashCommandBuilder()
