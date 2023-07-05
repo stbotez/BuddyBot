@@ -1,5 +1,4 @@
 const pino = require("pino");
-const pino = require("pino");
 
 module.exports = {
   getRandomIntInclusive: (min, max) => {
