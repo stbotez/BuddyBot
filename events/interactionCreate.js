@@ -1,6 +1,6 @@
 const path = require("node:path");
 const { Events } = require("discord.js");
-const logger = require(path.join(process.cwd(), "util", "logger.js"));
+const { logger } = require("../util/helper.js");
 
 module.exports = {
   name: Events.InteractionCreate,

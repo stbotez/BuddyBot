@@ -3,13 +3,8 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
 const MidiWriter = require("midi-writer-js");
-const { getRandomIntInclusive } = require(path.join(
-  process.cwd(),
-  "util",
-  "helper.js"
-));
+const { getRandomIntInclusive, logger } = require("../../util/helper.js");
 const { Scale } = require("tonal");
-const logger = require(path.join(process.cwd(), "util", "logger.js"));
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -74,7 +69,7 @@ module.exports = {
     const soundfonts = fs.readdirSync(soundfontDir);
     const soundfont =
       soundfonts[getRandomIntInclusive(0, soundfonts.length - 1)];
-   logger.info(`Currently selected soundfont is ${soundfont}`);   
+    logger.info(`Currently selected soundfont is ${soundfont}`);
     const child = spawnSync("fluidsynth", [
       path.join(soundfontDir, soundfont),
       midiPath,
