@@ -9,7 +9,7 @@ const { googleAPIKey, searchEngineId } = require(path.join(
   process.cwd(),
   "config.json"
 ));
-const { getRandomIntInclusive } = require(path.join(
+const { getRandomIntInclusive, getPageOfImageIndex } = require(path.join(
   process.cwd(),
   "util",
   "helper.js"
@@ -46,7 +46,7 @@ module.exports = {
     const resultsPerPage = 10;
     const startImageIndex = shouldResultsRandomize
       ? getRandomIntInclusive(0, 80)
-      : getPageContainingImageIndex(imageIndex) * resultsPerPage;
+      : getPageOfImageIndex(imageIndex) * resultsPerPage;
     const requestURL =
       `https://www.googleapis.com/customsearch/v1?` +
       `key=${googleAPIKey}` +
@@ -83,14 +83,5 @@ module.exports = {
     await interaction.reply({ embeds: [embed] });
   },
 };
-
-async function getPageContainingImageIndex(ind) {
-  let page = 0;
-
-  if (ind > 9) {
-    page = ind - (ind % 10);
-  }
-  return page / 10;
-}
 
 // TODO: Probably move this function to helper class.
