@@ -49,25 +49,25 @@ module.exports = {
     const body = await res.body.json();
     if (body.searchInformation.totalResults == 0) {
       const budInvert = new AttachmentBuilder(
-        path.join(process.cwd(), "assets", "img", "buddyInvert.png")
+        path.join("..", "assets", "img", "buddyInvert.png")
       );
-      const embed = new EmbedBuilder()
+      const noResultsEmbed = new EmbedBuilder()
         .setColor("Red")
         .setTitle("No results found")
         .setThumbnail("attachment://buddyInvert.png")
         .addFields({ name: "Query", value: query, inline: true });
-      await interaction.reply({ embeds: [embed], files: [budInvert] });
+      await interaction.reply({ embeds: [noResultsEmbed], files: [budInvert] });
     }
 
     const image = shouldResultsRandomize
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
       : body.items[imageIndex % 10];
-    const embed = new EmbedBuilder()
+    const resultEmbed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(image.title)
       .setURL(image.link)
       .setImage(image.link)
       .addFields({ name: "Query", value: query, inline: true });
-    await interaction.reply({ embeds: [embed] });
+    await interaction.reply({ embeds: [resultEmbed] });
   },
 };
