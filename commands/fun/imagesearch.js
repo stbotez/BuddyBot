@@ -28,15 +28,16 @@ module.exports = {
   async execute(interaction) {
     const query = interaction.options.getString("query");
     const imageIndex = interaction.options.getInteger("index") ?? -1;
-    const shouldResultsRandomize = imageIndex == -1 ? true : false;
     const isAnimated = interaction.options.getBoolean("is-animated") ?? false;
+    const shouldRandomizeResults = imageIndex == -1 ? true : false;
     const searchType = "image";
     const resultsPerPage = 10;
     const minStartIndex = 0;
     const maxStartIndex = 80;
-    const startImageIndex = shouldResultsRandomize
+    const startImageIndex = shouldRandomizeResults
       ? getRandomIntInclusive(minStartIndex, maxStartIndex)
       : getPageOfImageIndex(imageIndex) * resultsPerPage;
+    logger.info(`${startImageIndex}`);
     const requestURL =
       `https://www.googleapis.com/customsearch/v1?` +
       `key=${googleAPIKey}` +
@@ -61,7 +62,7 @@ module.exports = {
       await interaction.reply({ embeds: [noResultsEmbed], files: [budInvert] });
     }
 
-    const image = shouldResultsRandomize
+    const image = shouldRandomizeResults
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
       : body.items[imageIndex % resultsPerPage];
     const resultEmbed = new EmbedBuilder()
