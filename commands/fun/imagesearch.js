@@ -32,8 +32,10 @@ module.exports = {
     const isAnimated = interaction.options.getBoolean("is-animated") ?? false;
     const searchType = "image";
     const resultsPerPage = 10;
+    const minStartIndex = 0;
+    const maxStartIndex = 80;
     const startImageIndex = shouldResultsRandomize
-      ? getRandomIntInclusive(0, 80)
+      ? getRandomIntInclusive(minStartIndex, maxStartIndex)
       : getPageOfImageIndex(imageIndex) * resultsPerPage;
     const requestURL =
       `https://www.googleapis.com/customsearch/v1?` +
