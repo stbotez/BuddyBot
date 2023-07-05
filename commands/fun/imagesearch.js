@@ -61,7 +61,7 @@ module.exports = {
 
     const image = shouldResultsRandomize
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
-      : body.items[imageIndex % 10];
+      : body.items[imageIndex % resultsPerPage];
     const resultEmbed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(image.title)
