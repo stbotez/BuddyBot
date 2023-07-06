@@ -47,7 +47,7 @@ module.exports = {
       "imgType": isAnimated ? "animated" : "imgTypeUndefined",
       "start": startImageIndex,
     });
-    let requestURL = getRequestURL(googleAPIKey, searchEngineId, searchParams);
+    let requestURL = createRequestURL(googleAPIKey, searchEngineId, searchParams);
 
     logger.info(`Request URL: ${requestURL}`);
     let res = await request(requestURL);
@@ -96,7 +96,7 @@ module.exports = {
       if (i.customId === "reuse-query") {
         startImageIndex = getRandomIntInclusive(minStartIndex, maxStartIndex);
         searchParams.set("start", startImageIndex);
-        requestURL = getRequestURL(googleAPIKey, searchEngineId, searchParams);
+        requestURL = createRequestURL(googleAPIKey, searchEngineId, searchParams);
         logger.info(`Request URL: ${requestURL}`);
         res = await request(requestURL);
         logger.info(`Response code: ${res.statusCode}`);
@@ -112,7 +112,7 @@ module.exports = {
   },
 };
 
-const getRequestURL = (googleAPIKey, searchEngineId, searchParams) => {
+const createRequestURL = (googleAPIKey, searchEngineId, searchParams) => {
   return `https://www.googleapis.com/customsearch/v1?` +
     `key=${googleAPIKey}` +
     `&cx=${searchEngineId}` +
