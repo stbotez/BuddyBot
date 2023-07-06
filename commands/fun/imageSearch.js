@@ -58,7 +58,7 @@ module.exports = {
       const budInvert = new AttachmentBuilder(
         path.join("..", "assets", "img", "buddyInvert.png")
       );
-      const noResultsEmbed = new EmbedBuilder()
+      const noResultEmbed = new EmbedBuilder()
         .setColor("Red")
         .setTitle("No results found")
         .setThumbnail("attachment://buddyInvert.png")
