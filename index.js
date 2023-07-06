@@ -53,10 +53,4 @@ for (const file of eventFiles) {
   }
 }
 
-client.on("messageCreate", (message) => {
-  if (message.content === "jojo") {
-    message.channel.send("buddy");
-  }
-});
-
 client.login(token);
