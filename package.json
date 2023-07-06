@@ -12,7 +12,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "predev": "node ./util/deploycommands.js",
+    "predev": "node ./util/deployCommands.js",
     "dev": "node . | pino-pretty -i pid,hostname -t 'yyyy-mm-dd HH:MM:ss'"
   },
   "keywords": [],
