@@ -67,9 +67,9 @@ module.exports = {
       await interaction.reply({ embeds: [noResultsEmbed], files: [budInvert] });
     }
 
-    const image = shouldRandomizeResults
-      ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
-      : body.items[imageIndex % resultsPerPage];
+    const image = shouldRandomizeResults ?
+      body.items[getRandomIntInclusive(0, body.items.length - 1)] :
+      body.items[imageIndex % resultsPerPage];
 
     const reuseQueryBtn = new ButtonBuilder()
       .setCustomId("primary")
