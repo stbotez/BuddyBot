@@ -1,8 +1,10 @@
 const path = require("node:path");
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder,
+  ButtonStyle, ActionRowBuilder } = require("discord.js");
 const { request } = require("undici");
 const { googleAPIKey, searchEngineId } = require("../../config.json");
-const { getRandomIntInclusive, getPageOfImageIndex, logger } = require("../../util/helper.js");
+const { getRandomIntInclusive, getPageOfImageIndex, logger } =
+  require("../../util/helper.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -38,6 +40,7 @@ module.exports = {
       ? getRandomIntInclusive(minStartIndex, maxStartIndex)
       : getPageOfImageIndex(imageIndex) * resultsPerPage;
     logger.info(`${startImageIndex}`);
+
     const requestURL =
       `https://www.googleapis.com/customsearch/v1?` +
       `key=${googleAPIKey}` +
@@ -50,6 +53,7 @@ module.exports = {
     const res = await request(requestURL);
     logger.info(`Response code: ${res.statusCode}`);
     const body = await res.body.json();
+
     if (body.searchInformation.totalResults == 0) {
       const budInvert = new AttachmentBuilder(
         path.join("..", "assets", "img", "buddyInvert.png")
@@ -59,18 +63,29 @@ module.exports = {
         .setTitle("No results found")
         .setThumbnail("attachment://buddyInvert.png")
         .addFields({ name: "Query", value: query, inline: true });
+
       await interaction.reply({ embeds: [noResultsEmbed], files: [budInvert] });
     }
 
     const image = shouldRandomizeResults
       ? body.items[getRandomIntInclusive(0, body.items.length - 1)]
       : body.items[imageIndex % resultsPerPage];
+
+    const reuseQueryBtn = new ButtonBuilder()
+      .setCustomId("primary")
+      .setStyle(ButtonStyle.Primary)
+      .setEmoji("🎲");
+
+    const buttonRow = new ActionRowBuilder()
+      .addComponents(reuseQueryBtn);
+
     const resultEmbed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(image.title)
       .setURL(image.link)
       .setImage(image.link)
       .addFields({ name: "Query", value: query, inline: true });
-    await interaction.reply({ embeds: [resultEmbed] });
+
+    await interaction.reply({ embeds: [resultEmbed], components: [buttonRow] });
   },
 };
