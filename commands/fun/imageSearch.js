@@ -1,11 +1,11 @@
 const path = require("node:path");
+const { URLSearchParams } = require("node:url");
 const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder, ButtonBuilder,
-  ButtonStyle, ActionRowBuilder } = require("discord.js");
+  ButtonStyle, ActionRowBuilder, ComponentType } = require("discord.js");
 const { request } = require("undici");
 const { googleAPIKey, searchEngineId } = require("../../config.json");
 const { getRandomIntInclusive, getPageOfImageIndex, logger } =
   require("../../util/helper.js");
-const { URLSearchParams } = require("node:url");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -37,10 +37,9 @@ module.exports = {
     const resultsPerPage = 10;
     const minStartIndex = 0;
     const maxStartIndex = 80;
-    const startImageIndex = shouldRandomizeResults
+    let startImageIndex = shouldRandomizeResults
       ? getRandomIntInclusive(minStartIndex, maxStartIndex)
       : getPageOfImageIndex(imageIndex) * resultsPerPage;
-    logger.info(`${startImageIndex}`);
 
     let searchParams = new URLSearchParams({
       "q": query,
@@ -49,6 +48,7 @@ module.exports = {
       "start": startImageIndex,
     });
     let requestURL = getRequestURL(googleAPIKey, searchEngineId, searchParams);
+
     logger.info(`Request URL: ${requestURL}`);
     let res = await request(requestURL);
     logger.info(`Response code: ${res.statusCode}`);
@@ -90,20 +90,25 @@ module.exports = {
 
     const response = await interaction.reply({ embeds: [resultEmbed], components: [buttonRow] });
 
-    try {
-      const reuseQueryCheck = await response.awaitMessageComponent({ filter: userFilter, time: 60000 });
-      if (reuseQueryCheck.customId === "reuse-query") {
+    const collector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
+
+    collector.on('collect', async i => {
+      if (i.customId === "reuse-query") {
+        startImageIndex = getRandomIntInclusive(minStartIndex, maxStartIndex);
+        searchParams.set("start", startImageIndex);
+        requestURL = getRequestURL(googleAPIKey, searchEngineId, searchParams);
+        logger.info(`Request URL: ${requestURL}`);
         res = await request(requestURL);
         logger.info(`Response code: ${res.statusCode}`);
         body = await res.body.json();
         image = body.items[getRandomIntInclusive(0, body.items.length - 1)];
+        resultEmbed.setTitle(image.title);
+        resultEmbed.setURL(image.link);
         resultEmbed.setImage(image.link);
-        await reuseQueryCheck.update({ embeds: [resultEmbed], components: [buttonRow] });
+        await i.update({ content: "Returning new random image using same query" });
+        await i.followUp({ embeds: [resultEmbed], components: [buttonRow] });
       }
-    } catch (e) {
-      logger.error(e);
-      await interaction.editReply({ embeds: [resultEmbed], content: '🎲 disabled due to time limit', components: [] });
-    }
+    });
   },
 };
 
