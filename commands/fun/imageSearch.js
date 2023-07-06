@@ -106,7 +106,7 @@ module.exports = {
         resultEmbed.setURL(image.link);
         resultEmbed.setImage(image.link);
         await i.update({ content: "Returning new random image using same query" });
-        await i.followUp({ embeds: [resultEmbed], components: [buttonRow] });
+        await i.editReply({ embeds: [resultEmbed], components: [buttonRow] });
       }
     });
   },
