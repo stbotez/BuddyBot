@@ -5,6 +5,7 @@ const { request } = require("undici");
 const { googleAPIKey, searchEngineId } = require("../../config.json");
 const { getRandomIntInclusive, getPageOfImageIndex, logger } =
   require("../../util/helper.js");
+const { URLSearchParams } = require("node:url");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -41,14 +42,13 @@ module.exports = {
       : getPageOfImageIndex(imageIndex) * resultsPerPage;
     logger.info(`${startImageIndex}`);
 
-    const requestURL =
-      `https://www.googleapis.com/customsearch/v1?` +
-      `key=${googleAPIKey}` +
-      `&cx=${searchEngineId}` +
-      `&q=${query}` +
-      `&searchType=${searchType}` +
-      `&imgType=${isAnimated ? "animated" : "imgTypeUndefined"}` +
-      `&start=${startImageIndex}`;
+    let searchParams = new URLSearchParams({
+      "q": query,
+      "searchType": searchType,
+      "imgType": isAnimated ? "animated" : "imgTypeUndefined",
+      "start": startImageIndex,
+    });
+    let requestURL = getRequestURL(googleAPIKey, searchEngineId, searchParams);
     logger.info(`Request URL: ${requestURL}`);
     let res = await request(requestURL);
     logger.info(`Response code: ${res.statusCode}`);
@@ -67,7 +67,7 @@ module.exports = {
       await interaction.reply({ embeds: [noResultsEmbed], files: [budInvert] });
     }
 
-    const image = shouldRandomizeResults ?
+    let image = shouldRandomizeResults ?
       body.items[getRandomIntInclusive(0, body.items.length - 1)] :
       body.items[imageIndex % resultsPerPage];
 
@@ -93,7 +93,12 @@ module.exports = {
     try {
       const reuseQueryCheck = await response.awaitMessageComponent({ filter: userFilter, time: 60000 });
       if (reuseQueryCheck.customId === "reuse-query") {
-        await reuseQueryCheck.update({ content: "test", components: [] });
+        res = await request(requestURL);
+        logger.info(`Response code: ${res.statusCode}`);
+        body = await res.body.json();
+        image = body.items[getRandomIntInclusive(0, body.items.length - 1)];
+        resultEmbed.setImage(image.link);
+        await reuseQueryCheck.update({ embeds: [resultEmbed], components: [buttonRow] });
       }
     } catch (e) {
       logger.error(e);
@@ -101,3 +106,10 @@ module.exports = {
     }
   },
 };
+
+const getRequestURL = (googleAPIKey, searchEngineId, searchParams) => {
+  return `https://www.googleapis.com/customsearch/v1?` +
+    `key=${googleAPIKey}` +
+    `&cx=${searchEngineId}` +
+    `&${searchParams.toString()}`;
+}
