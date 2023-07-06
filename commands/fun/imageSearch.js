@@ -50,9 +50,9 @@ module.exports = {
       `&imgType=${isAnimated ? "animated" : "imgTypeUndefined"}` +
       `&start=${startImageIndex}`;
     logger.info(`Request URL: ${requestURL}`);
-    const res = await request(requestURL);
+    let res = await request(requestURL);
     logger.info(`Response code: ${res.statusCode}`);
-    const body = await res.body.json();
+    let body = await res.body.json();
 
     if (body.searchInformation.totalResults == 0) {
       const budInvert = new AttachmentBuilder(
@@ -71,14 +71,6 @@ module.exports = {
       body.items[getRandomIntInclusive(0, body.items.length - 1)] :
       body.items[imageIndex % resultsPerPage];
 
-    const reuseQueryBtn = new ButtonBuilder()
-      .setCustomId("primary")
-      .setStyle(ButtonStyle.Primary)
-      .setEmoji("🎲");
-
-    const buttonRow = new ActionRowBuilder()
-      .addComponents(reuseQueryBtn);
-
     const resultEmbed = new EmbedBuilder()
       .setColor("Blue")
       .setTitle(image.title)
@@ -86,6 +78,26 @@ module.exports = {
       .setImage(image.link)
       .addFields({ name: "Query", value: query, inline: true });
 
-    await interaction.reply({ embeds: [resultEmbed], components: [buttonRow] });
+    const reuseQueryBtn = new ButtonBuilder()
+      .setCustomId("reuse-query")
+      .setStyle(ButtonStyle.Primary)
+      .setEmoji("🎲");
+
+    const buttonRow = new ActionRowBuilder()
+      .addComponents(reuseQueryBtn);
+
+    const userFilter = i => i.user.id === interaction.user.id;
+
+    const response = await interaction.reply({ embeds: [resultEmbed], components: [buttonRow] });
+
+    try {
+      const reuseQueryCheck = await response.awaitMessageComponent({ filter: userFilter, time: 60000 });
+      if (reuseQueryCheck.customId === "reuse-query") {
+        await reuseQueryCheck.update({ content: "test", components: [] });
+      }
+    } catch (e) {
+      logger.error(e);
+      await interaction.editReply({ embeds: [resultEmbed], content: '🎲 disabled due to time limit', components: [] });
+    }
   },
 };
