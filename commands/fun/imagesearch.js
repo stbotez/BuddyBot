@@ -36,6 +36,7 @@ module.exports = {
       + `&searchType=${searchType}`
       + `&imgType=${isAnimated ? 'animated' : 'imgTypeUndefined'}`
       + `&start=${startImageIndex}`;
+
     logger.info(`Request URL: ${requestURL}`);
     const res = await request(requestURL);
     logger.info(`Response code: ${res.statusCode}`);
@@ -61,6 +62,7 @@ module.exports = {
       .setURL(image.link)
       .setImage(image.link)
       .addFields({ name: 'Query', value: query, inline: true });
+      
     await interaction.reply({ embeds: [resultEmbed] });
   },
 };
