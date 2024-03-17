@@ -2,6 +2,7 @@
   "dependencies": {
     "@napi-rs/canvas": "^0.1.41",
     "discord.js": "^14.11.0",
+    "fakeyou.js": "^1.1.1",
     "midi-writer-js": "^2.1.4",
     "pino": "^7.0.0-rc.9",
     "tonal": "^4.14.1",
@@ -18,6 +19,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {}
+  "description": ""
 }
